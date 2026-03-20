@@ -72,10 +72,10 @@ export async function POST(req: Request) {
   });
 
   await sendEmail(
-  user.email,
+  user?.email,
   "Reservation Confirmed",
   `<h2>Your parking is booked!</h2>
-   <p>Space: ${space.number}</p>
+   <p>Space: ${space?.number}</p>
    <p>Time: ${startTime} - ${endTime}</p>`
 );
 

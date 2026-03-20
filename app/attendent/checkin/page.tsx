@@ -43,7 +43,7 @@ export default function CheckInPage() {
         >
           <option value="">Select Vehicle</option>
 
-          {vehicles.map((v) => (
+          {vehicles?.map((v) => (
             <option key={v.id} value={v.id}>
               {v.plateNumber} ({v.type})
             </option>

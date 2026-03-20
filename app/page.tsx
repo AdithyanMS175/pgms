@@ -38,21 +38,21 @@ export default async function Home() {
       <div className="grid grid-cols-2 gap-6">
 
         {/*  MANAGER */}
-        {user.role === "MANAGER" && (
+        {user?.role === "MANAGER" && (
           <a href="/setup" className="card">
             Setup Garage
           </a>
         )}
 
         {/*  MEMBER */}
-        {user.role === "MEMBER" && (
+        {user?.role === "MEMBER" && (
           <a href="/member/reserve" className="card">
             Reserve
           </a>
         )}
 
         {/* ATTENDANT */}
-        {user.role === "ATTENDANT" && (
+        {user?.role === "ATTENDANT" && (
           <>
             <a href="/attendent/checkin" className="card">
               Check-In

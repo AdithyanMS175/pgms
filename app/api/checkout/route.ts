@@ -25,12 +25,12 @@ export async function POST(req: Request) {
 
   const endTime = new Date();
 
-  const durationMs = endTime.getTime() - new Date(session.checkIn).getTime();
+  const durationMs = endTime.getTime() - new Date(session?.checkIn).getTime();
   const durationHours = durationMs / (1000 * 60 * 60);
 
   let price = 0;
 
-  let current = new Date(session.checkIn);
+  let current = new Date(session?.checkIn);
 
   while (current < endTime) {
     const hour = current.getHours();
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
   });
 
   await sendEmail(
-    session.vehicle.user.email,
+    session?.vehicle?.user?.email,
     "Parking Receipt",
     `<h2>Checkout Successful</h2>
    <p>Total Cost: ₹${price}</p>`,

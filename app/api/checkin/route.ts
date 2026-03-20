@@ -68,11 +68,11 @@ export async function POST(req: Request) {
 
   if (vehicle?.user?.email) {
     await sendEmail(
-      vehicle.user.email,
+      vehicle?.user?.email,
       "Vehicle Checked In",
       `<h2>Check-In Successful</h2>
-     <p>Vehicle: ${vehicle.plateNumber}</p>
-     <p>Space: ${space.number}</p>
+     <p>Vehicle: ${vehicle?.plateNumber}</p>
+     <p>Space: ${space?.number}</p>
      <p>Time: ${new Date().toLocaleString()}</p>`,
     );
   }
