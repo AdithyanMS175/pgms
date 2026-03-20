@@ -18,11 +18,14 @@ export default function Login() {
 
     const data = await res.json();
     if (res.ok) {
+      
       router.push("/");
+      router.refresh();
+      alert(data.message);
+      
     } else {
       alert(data.error);
     }
-    alert(data.message);
   };
 
   return (
@@ -43,7 +46,10 @@ export default function Login() {
           className="w-full border p-2 rounded mb-4"
         />
 
-        <button onClick={login} className="btn w-full bg-amber-300 rounded-4xl p-3 cursor-pointer">
+        <button
+          onClick={login}
+          className="btn w-full bg-amber-300 rounded-4xl p-3 cursor-pointer"
+        >
           Login
         </button>
 

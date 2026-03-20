@@ -33,7 +33,6 @@ export default function Setup() {
 
   useEffect(() => {
     fetchGarages();
-    window.location.reload();
   }, []);
 
   const fetchGarages = async () => {

@@ -1,3 +1,4 @@
+import { sendEmail } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
@@ -5,6 +6,9 @@ export async function POST(req: Request) {
 
   const vehicle = await prisma.vehicle.findUnique({
     where: { id: vehicleId },
+    include: {
+      user: true,
+    },
   });
 
   const space = await prisma.space.findUnique({
@@ -61,10 +65,25 @@ export async function POST(req: Request) {
       checkIn: new Date(),
     },
   });
+
+  if (vehicle?.user?.email) {
+    await sendEmail(
+      vehicle.user.email,
+      "Vehicle Checked In",
+      `<h2>Check-In Successful</h2>
+     <p>Vehicle: ${vehicle.plateNumber}</p>
+     <p>Space: ${space.number}</p>
+     <p>Time: ${new Date().toLocaleString()}</p>`,
+    );
+  }
+
   await prisma.space.update({
     where: { id: spaceId },
     data: { isOccupied: true },
   });
 
-  return Response.json(session);
+  return Response.json({
+    message: "Checked in successfully",
+    sessionId: session.id,
+  });
 }

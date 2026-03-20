@@ -28,7 +28,7 @@ export default function CheckInPage() {
     });
 
     const data = await res.json();
-    setResponse(JSON.stringify(data, null, 2));
+    setResponse(JSON.stringify(data.message, null, 2));
   };
 
   return (

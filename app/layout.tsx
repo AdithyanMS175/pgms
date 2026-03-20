@@ -53,18 +53,23 @@ export default async function RootLayout({
             </a>
 
             {/* MEMBER */}
-            {user?.role === "MEMBER" && <a href="/reserve">Reserve</a>}
+            {user?.role === "MEMBER" && (
+              <>
+                <a href="/member/reserve">Reserve</a>
+                <a href="/member/vehicle" className="bg-green-500 text-white px-3 py-1 rounded">+ Add Vehicle</a>
+              </>
+            )}
 
             {/* ATTENDANT */}
             {user?.role === "ATTENDANT" && (
               <>
-                <a href="/checkin">CheckIn</a>
-                <a href="/checkout">Checkout</a>
+                <a href="/attendent/checkin">CheckIn</a>
+                <a href="/attendent/checkout">Checkout</a>
               </>
             )}
 
             {/* MANAGER */}
-            {user?.role === "MANAGER" && <a href="/setup">Setup</a>}
+            {user?.role === "MANAGER" && <a href="/manager/setup">Setup</a>}
 
             {userId ? (
               <LogoutButton />

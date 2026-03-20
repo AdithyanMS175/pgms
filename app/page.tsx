@@ -46,7 +46,7 @@ export default async function Home() {
 
         {/*  MEMBER */}
         {user.role === "MEMBER" && (
-          <a href="/reserve" className="card">
+          <a href="/member/reserve" className="card">
             Reserve
           </a>
         )}
@@ -54,10 +54,10 @@ export default async function Home() {
         {/* ATTENDANT */}
         {user.role === "ATTENDANT" && (
           <>
-            <a href="/checkin" className="card">
+            <a href="/attendent/checkin" className="card">
               Check-In
             </a>
-            <a href="/checkout" className="card">
+            <a href="/attendent/checkout" className="card">
               Check-Out
             </a>
           </>

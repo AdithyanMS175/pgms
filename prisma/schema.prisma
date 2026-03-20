@@ -50,6 +50,7 @@ model Vehicle {
   plateNumber String           @unique
   type        String
   userId      String
+  vehicleId   String
   user        User             @relation(fields: [userId], references: [id])
   sessions    ParkingSession[]
 }

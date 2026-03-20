@@ -1,3 +1,4 @@
+import { sendEmail } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 
@@ -70,7 +71,16 @@ export async function POST(req: Request) {
     },
   });
 
+  await sendEmail(
+  user.email,
+  "Reservation Confirmed",
+  `<h2>Your parking is booked!</h2>
+   <p>Space: ${space.number}</p>
+   <p>Time: ${startTime} - ${endTime}</p>`
+);
+
   return Response.json({
+    message: "Reservation successful",
     reservation,
     hasPass, 
   });

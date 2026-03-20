@@ -4,11 +4,17 @@ import { useEffect, useState } from "react";
 export default function Reserve() {
   const [spaces, setSpaces] = useState<any[]>([]);
   const [selectedSpace, setSelectedSpace] = useState<string>("");
+  const [vehicles, setVehicles] = useState<any[]>([]);
+  const [vehicleId, setVehicleId] = useState("");
 
   useEffect(() => {
     fetch("/api/space")
       .then((res) => res.json())
-      .then((data) => setSpaces(data));
+      .then((dataspace) => setSpaces(dataspace));
+
+    fetch("/api/vehicle")
+      .then((res) => res.json())
+      .then((data) => setVehicles(data));
   }, []);
 
   const reserve = async () => {
@@ -30,7 +36,7 @@ export default function Reserve() {
     });
 
     const data = await res.json();
-    alert(JSON.stringify(data));
+    alert(JSON.stringify(data.message));
   };
 
   return (
@@ -38,7 +44,7 @@ export default function Reserve() {
       <h2 className="text-2xl font-bold mb-6 text-center">
         Select Parking Space
       </h2>
-
+      
       {/* SPACE GRID */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-3xl mx-auto">
         {spaces.map((space) => (
@@ -53,13 +59,9 @@ export default function Reserve() {
               }
             `}
           >
-            <h3 className="font-semibold text-lg">
-              Space {space.number}
-            </h3>
+            <h3 className="font-semibold text-lg">Space {space.number}</h3>
 
-            <p className="text-sm text-gray-600">
-              Size: {space.size}
-            </p>
+            <p className="text-sm text-gray-600">Size: {space.size}</p>
 
             <p className="text-sm text-gray-500">
               Zone: {space.zone?.name || "N/A"}
