@@ -1,0 +1,128 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  MANAGER
+  ATTENDANT
+  MEMBER
+}
+
+enum ZoneType {
+  STANDARD
+  PREMIUM
+  EV
+  HANDICAP
+}
+
+enum ReservationStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+  EXPIRED
+}
+
+model User {
+  id           String        @id @default(uuid())
+  name         String
+  email        String        @unique
+  password     String 
+  role         Role
+  vehicles     Vehicle[]
+  passes       Pass[]
+  reservations Reservation[]
+  createdAt    DateTime      @default(now())
+}
+
+model Vehicle {
+  id          String           @id @default(uuid())
+  plateNumber String           @unique
+  type        String
+  userId      String
+  user        User             @relation(fields: [userId], references: [id])
+  sessions    ParkingSession[]
+}
+
+model Garage {
+  id        String   @id @default(uuid())
+  name      String
+  location  String?
+  floors    Floor[]
+  createdAt DateTime @default(now())
+}
+
+model Floor {
+  id       String @id @default(uuid())
+  number   Int
+  garageId String
+  garage   Garage @relation(fields: [garageId], references: [id])
+  zones    Zone[]
+}
+
+model Zone {
+  id        String   @id @default(uuid())
+  name      String
+  type      ZoneType
+  floorId   String
+  floor     Floor    @relation(fields: [floorId], references: [id])
+  spaces    Space[]
+  basePrice Float
+  passes    Pass[]
+}
+
+model Space {
+  id           String           @id @default(uuid())
+  number       String
+  zoneId       String
+  zone         Zone             @relation(fields: [zoneId], references: [id])
+  size         String
+  isOccupied   Boolean          @default(false)
+  reservations Reservation[]
+  sessions     ParkingSession[]
+}
+
+model Reservation {
+  id        String            @id @default(uuid())
+  userId    String
+  spaceId   String
+  user      User              @relation(fields: [userId], references: [id])
+  space     Space             @relation(fields: [spaceId], references: [id])
+  startTime DateTime
+  endTime   DateTime
+  status    ReservationStatus
+  createdAt DateTime          @default(now())
+
+  @@index([spaceId, startTime, endTime])
+}
+
+model ParkingSession {
+  id        String    @id @default(uuid())
+  vehicleId String
+  spaceId   String
+  vehicle   Vehicle   @relation(fields: [vehicleId], references: [id])
+  space     Space     @relation(fields: [spaceId], references: [id])
+  checkIn   DateTime
+  checkOut  DateTime?
+  totalCost Float?
+}
+
+model Pass {
+  id        String   @id @default(uuid())
+  userId    String
+  zoneId    String
+  user      User     @relation(fields: [userId], references: [id])
+  zone      Zone     @relation(fields: [zoneId], references: [id])
+  validFrom DateTime
+  validTo   DateTime
+}
