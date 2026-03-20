@@ -22,7 +22,7 @@ export default function CheckOutPage() {
     });
 
     const data = await res.json();
-    setResult(data);
+    setResult(data.message);
   };
 
   return (
