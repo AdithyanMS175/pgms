@@ -39,7 +39,7 @@ export default async function Home() {
 
         {/*  MANAGER */}
         {user?.role === "MANAGER" && (
-          <a href="/setup" className="card">
+          <a href="/manager/setup" className="card">
             Setup Garage
           </a>
         )}

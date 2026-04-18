@@ -21,7 +21,7 @@ export default function AddVehicle() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-6 rounded-xl shadow w-96">
-        <h2 className="text-xl font-semibold mb-4">Add Vehicle</h2>
+        <h2 className="text-xl font-semibold mb-4 text-center">Add Vehicle</h2>
 
         <input
           placeholder="Plate Number"
@@ -29,6 +29,9 @@ export default function AddVehicle() {
           onChange={(e) => setPlateNumber(e.target.value)}
           className="w-full border p-2 rounded mb-3"
         />
+
+
+        <h5 className="text-sm font-semibold mb-4">Size of  Vehicle</h5>
 
         <select
           value={type}

@@ -52,10 +52,17 @@ export async function POST(req: Request) {
   });
 
   if (activeReservation) {
-    return Response.json(
-      { error: "Space reserved, cannot check-in" },
-      { status: 400 },
-    );
+    if (activeReservation.userId !== vehicle.userId) {
+      return Response.json(
+        { error: "Space reserved for another user" },
+        { status: 400 },
+      );
+    }
+
+    await prisma.reservation.update({
+      where: { id: activeReservation.id },
+      data: { status: "COMPLETED" },
+    });
   }
 
   const session = await prisma.parkingSession.create({

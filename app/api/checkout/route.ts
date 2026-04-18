@@ -12,6 +12,11 @@ export async function POST(req: Request) {
           user: true,
         },
       },
+      space: {
+        include: {
+          zone: true,
+        },
+      },
     },
   });
 
@@ -19,32 +24,57 @@ export async function POST(req: Request) {
     return Response.json({ error: "Session not found" }, { status: 404 });
   }
 
-  if (!session?.vehicle?.user?.email) {
-    return Response.json({ error: "User email not found" }, { status: 400 });
+
+  if (session.checkOut) {
+    return Response.json(
+      { error: "Session already checked out" },
+      { status: 400 }
+    );
   }
 
   const endTime = new Date();
 
-  const durationMs = endTime.getTime() - new Date(session?.checkIn).getTime();
+  const durationMs =
+    endTime.getTime() - new Date(session.checkIn).getTime();
+
   const durationHours = durationMs / (1000 * 60 * 60);
+
+  const space = session.space;
+  const basePrice = space?.zone?.basePrice || 20;
+
+ 
+  const pass = await prisma.pass.findFirst({
+    where: {
+      userId: session.vehicle.user.id,
+      zoneId: space.zoneId,
+      validFrom: { lte: new Date() },
+      validTo: { gte: new Date() },
+    },
+  });
 
   let price = 0;
 
-  let current = new Date(session?.checkIn);
+  if (!pass) {
+   
+    const totalHours = Math.ceil(durationHours);
 
-  while (current < endTime) {
-    const hour = current.getHours();
+    let current = new Date(session.checkIn);
 
-    const isPeak = hour >= 9 && hour < 18;
+    for (let i = 0; i < totalHours; i++) {
+      const hour = current.getHours();
 
-    const rate = isPeak ? 40 : 20;
+      const isPeak = hour >= 9 && hour < 18;
 
-    price += rate;
+      const rate = isPeak ? basePrice * 1.5 : basePrice;
 
-    current.setHours(current.getHours() + 1);
+      price += rate;
+
+      current.setHours(current.getHours() + 1);
+    }
   }
 
-  const updated = await prisma.parkingSession.update({
+  
+  await prisma.parkingSession.update({
     where: { id: sessionId },
     data: {
       checkOut: endTime,
@@ -52,15 +82,27 @@ export async function POST(req: Request) {
     },
   });
 
-  await sendEmail(
-    session?.vehicle?.user?.email,
-    "Parking Receipt",
-    `<h2>Checkout Successful</h2>
-   <p>Total Cost: ₹${price}</p>`,
-  );
+ 
+  await prisma.space.update({
+    where: { id: session.spaceId },
+    data: { isOccupied: false },
+  });
+
+ 
+  if (session.vehicle.user.email) {
+    await sendEmail(
+      session.vehicle.user.email,
+      "Parking Receipt",
+      `<h2>Checkout Successful</h2>
+       <p>Vehicle: ${session.vehicle.plateNumber}</p>
+       <p>Space: ${space.number}</p>
+       <p>Duration: ${durationHours.toFixed(2)} hours</p>
+       <p>Total Cost: ₹${price}</p>`
+    );
+  }
 
   return Response.json({
-    message: "Checked out successfully",
+    message: pass ? "Covered by pass" : "Checked out successfully",
     durationHours: durationHours.toFixed(2),
     price,
   });
