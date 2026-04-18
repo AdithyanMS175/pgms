@@ -9,14 +9,22 @@ export default function CheckInPage() {
   const [vehicles, setVehicles] = useState<any[]>([]);
 
   useEffect(() => {
+    FetchSpace();
+    FetchVehicle();
+
+  }, []);
+
+  const FetchSpace = async () => {
     fetch("/api/space")
       .then((res) => res.json())
       .then((data) => setSpaces(data));
+  };
 
+  const FetchVehicle = async () => {
     fetch("/api/vehicle")
       .then((res) => res.json())
       .then((data) => setVehicles(data));
-  }, []);
+  };
 
   const handleCheckIn = async () => {
     const res = await fetch("/api/checkin", {
@@ -61,7 +69,7 @@ export default function CheckInPage() {
             .filter((s) => !s.isOccupied && !s.isReservedNow)
             .map((space) => (
               <option key={space.id} value={space.id}>
-                {space.number} ({space.zone.name})
+                {space.number} ({space.zone?.name || "No Zone"})
               </option>
             ))}
         </select>

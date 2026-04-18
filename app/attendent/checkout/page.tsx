@@ -7,10 +7,14 @@ export default function CheckOutPage() {
   const [sessions, setSessions] = useState<any[]>([]);
 
   useEffect(() => {
+    FetchSession();
+  }, []);
+
+  const FetchSession = async () => {
     fetch("/api/session")
       .then((res) => res.json())
       .then((data) => setSessions(data));
-  }, []);
+  };
 
   const handleCheckOut = async () => {
     const res = await fetch("/api/checkout", {
@@ -23,6 +27,7 @@ export default function CheckOutPage() {
 
     const data = await res.json();
     setResult(data.message);
+    FetchSession();
   };
 
   return (
