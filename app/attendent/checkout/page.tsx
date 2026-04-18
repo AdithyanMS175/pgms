@@ -27,7 +27,11 @@ export default function CheckOutPage() {
 
     const data = await res.json();
     setResult(data.message);
-    FetchSession();
+
+    setTimeout(() => {
+      setResult(null);
+      FetchSession();
+    }, 5000);
   };
 
   return (

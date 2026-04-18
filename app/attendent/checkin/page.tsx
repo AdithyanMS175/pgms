@@ -11,13 +11,13 @@ export default function CheckInPage() {
   useEffect(() => {
     FetchSpace();
     FetchVehicle();
-
   }, []);
 
   const FetchSpace = async () => {
     fetch("/api/space")
       .then((res) => res.json())
       .then((data) => setSpaces(data));
+    console.log("Fetched spaces:", spaces);
   };
 
   const FetchVehicle = async () => {
@@ -37,6 +37,12 @@ export default function CheckInPage() {
 
     const data = await res.json();
     setResponse(JSON.stringify(data.message, null, 2));
+
+    setTimeout(() => {
+      setResponse("");
+    }, 5000);
+    FetchSpace();
+    FetchVehicle();
   };
 
   return (
