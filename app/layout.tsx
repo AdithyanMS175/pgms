@@ -4,6 +4,7 @@ import "./globals.css";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import LogoutButton from "./components/LogoutButton";
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,7 +44,7 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <nav className="bg-white shadow p-4 flex justify-between">
+        <nav className="fixed top-0 left-0 w-full z-50 bg-white shadow p-4 flex justify-between">
           <h1 className="font-bold">PGMS</h1>
 
           <div className="space-x-4">
@@ -74,14 +75,21 @@ export default async function RootLayout({
             {userId ? (
               <LogoutButton />
             ) : (
+              <>
               <a href="/login" className="text-blue-600">
                 Login
               </a>
+              <a href="/signup" className="text-blue-600">
+                Sign up
+              </a>
+              </>
+              
             )}
           </div>
         </nav>
 
         {children}
+         <Analytics />
       </body>
     </html>
   );

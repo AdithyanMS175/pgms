@@ -67,7 +67,7 @@ model Floor {
   id       String @id @default(uuid())
   number   Int
   garageId String
-  garage   Garage @relation(fields: [garageId], references: [id])
+  garage   Garage @relation(fields: [garageId], references: [id], onDelete: Cascade)
   zones    Zone[]
 }
 
@@ -76,7 +76,7 @@ model Zone {
   name      String
   type      ZoneType
   floorId   String
-  floor     Floor    @relation(fields: [floorId], references: [id])
+  floor     Floor    @relation(fields: [floorId], references: [id], onDelete: Cascade)
   spaces    Space[]
   basePrice Float
   passes    Pass[]
@@ -86,7 +86,7 @@ model Space {
   id           String           @id @default(uuid())
   number       String
   zoneId       String
-  zone         Zone             @relation(fields: [zoneId], references: [id])
+  zone         Zone             @relation(fields: [zoneId], references: [id], onDelete: Cascade)
   size         String
   isOccupied   Boolean          @default(false)
   reservations Reservation[]

@@ -50,13 +50,48 @@ export default function Setup() {
     });
 
     const data = await res.json();
+    // console.log("Created Garage:", data.id);
 
     setIds((prev) => ({ ...prev, garageId: data.id }));
+    // console.log(ids.garageId);
     fetchGarages();
+  };
+
+  const deleteGarage = async (id: string) => {
+    const confirmDelete = confirm(
+      "Are you sure you want to delete this garage?",
+    );
+    console.log(id);
+    if (!confirmDelete) return;
+
+    try {
+      const res = await fetch(`/api/garage/${id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || "Failed to delete");
+        return;
+      }
+
+      alert("Garage deleted!");
+      fetchGarages();
+    } catch (err) {
+      console.error(err);
+      alert("Server error");
+    }
   };
 
   //  CREATE FLOOR
   const createFloor = async () => {
+    console.log("Creating floor for garageId:", ids.garageId);
+    if (!ids.garageId) {
+      alert("Garage not created yet!");
+      return;
+    }
+
     try {
       const res = await fetch("/api/floor", {
         method: "POST",
@@ -145,14 +180,14 @@ export default function Setup() {
           onChange={(e) =>
             setGarageForm({ ...garageForm, name: e.target.value })
           }
-          className="border-black p-2 mx-5"
+          className="border border-black p-2 mx-5"
         />
         <input
           placeholder="Location"
           onChange={(e) =>
             setGarageForm({ ...garageForm, location: e.target.value })
           }
-          className="border-black p-2 mx-5"
+          className="border border-black p-2 mx-5"
         />
         <button onClick={createGarage} className="btn">
           Create Garage
@@ -163,42 +198,46 @@ export default function Setup() {
       {ids.garageId && (
         <div className="bg-white p-4 rounded shadow">
           <h2 className="font-bold mb-2">2. Add Floor</h2>
-          <input
-            placeholder="Floor Number"
-            onChange={(e) =>
-              setFloorForm({ ...floorForm, number: e.target.value })
-            }
-            className="border-black mx-2 p-2"
-          />
-          <button onClick={createFloor} className="btn">
-            Add Floor
-          </button>
+          <div className="flex items-center gap-2 mb-1">
+            <input
+              placeholder="Floor Number"
+              onChange={(e) =>
+                setFloorForm({ ...floorForm, number: e.target.value })
+              }
+              className="border border-black mx-2 p-2"
+            />
+            <button onClick={createFloor} className="btn">
+              Add Floor
+            </button>
+          </div>
+                    <span className="text-sm text-red-500">Number only</span>
+
         </div>
       )}
 
       {/* ZONE */}
       {ids.floorId && (
-        <div className="bg-white p-4 rounded shadow">
-          <h2 className="font-bold mb-2"> Add Zone</h2>
+        <div className="bg-white p-4 rounded shadow flex flex-col gap-3">
+          <h2 className="font-bold mb-2">3. Add Zone</h2>
           <input
             placeholder="Zone Name"
             onChange={(e) => setZoneForm({ ...zoneForm, name: e.target.value })}
-            className="border-black mx-2 p-2"
+            className="border border-black mx-2 p-2 w-70"
           />
           <input
             placeholder="Zone Type (STANDARD/PREMIUM)"
             onChange={(e) => setZoneForm({ ...zoneForm, type: e.target.value })}
-            className="border-black mx-10 p-2 w-70"
+            className="border border-black mx-2 p-2 w-70"
           />
           <input
             placeholder="Base Price"
             onChange={(e) =>
               setZoneForm({ ...zoneForm, basePrice: e.target.value })
             }
-            className="border-black mx-2 p-2"
+            className="border border-black mx-2 p-2 w-70"
           />
 
-          <button onClick={createZone} className="btn">
+          <button onClick={createZone} className="btn w-70">
             Add Zone
           </button>
         </div>
@@ -213,14 +252,14 @@ export default function Setup() {
             onChange={(e) =>
               setSpaceForm({ ...spaceForm, number: e.target.value })
             }
-            className="border-black"
+            className="border border-black p-3"
           />
           <input
             placeholder="Size (SMALL/MEDIUM/LARGE)"
             onChange={(e) =>
               setSpaceForm({ ...spaceForm, size: e.target.value })
             }
-            className="border-black "
+            className="border-black p-3 mx-3 border w-70"
           />
           <button onClick={createSpace} className="btn">
             Add Space
@@ -242,6 +281,13 @@ export default function Setup() {
               <p className="text-sm text-gray-500">
                 Location: {garage.location || "No location"}
               </p>
+
+              <button
+                onClick={() => deleteGarage(garage.id)}
+                className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+              >
+                Delete
+              </button>
             </div>
 
             {/* Floors */}

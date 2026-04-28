@@ -1,11 +1,30 @@
 import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
-  const { number, garageId } = await req.json();
+  try {
+    const { number, garageId } = await req.json();
 
-  const floor = await prisma.floor.create({
-    data: { number, garageId }
-  });
+    if (!number || !garageId) {
+      return Response.json(
+        { error: "Missing number or garageId" },
+        { status: 400 }
+      );
+    }
 
-  return Response.json(floor);
+    const floor = await prisma.floor.create({
+      data: {
+        number,
+        garageId,
+      },
+    });
+
+    return Response.json(floor);
+  } catch (error) {
+    console.error("FLOOR ERROR:", error);
+
+    return Response.json(
+      { error: "Failed to create floor" },
+      { status: 500 }
+    );
+  }
 }
